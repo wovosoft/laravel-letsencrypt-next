@@ -88,10 +88,6 @@ class Ssl extends Command
         }
     }
 
-    private function selfTestHttp()
-    {
-
-    }
 
     private function displayDomainAuthorizationChallenges(): static
     {
