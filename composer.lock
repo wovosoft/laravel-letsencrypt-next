@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "899c5e3fccffc8f20254f5a2bcf55e34",
+    "content-hash": "a09fcd43723ff9bf6eb86aed3083642e",
     "packages": [
         {
             "name": "brick/math",
@@ -5754,6 +5754,59 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "time": "2022-06-03T18:03:27+00:00"
+        },
+        {
+            "name": "wovosoft/laravel-letsencrypt-core",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "./packages/wovosoft/laravel-letsencrypt-core",
+                "reference": "0b1e0c498a80ac926bbe54af8f3bf383ad504b8b"
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-openssl": "*"
+            },
+            "type": "package",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Wovosoft\\LaravelLetsencryptCore\\LaravelLetsencryptCoreServiceProvider"
+                    ],
+                    "aliases": {
+                        "LaravelTypescript": "Wovosoft\\LaravelLetsencryptCore\\Facades\\LaravelLetsencryptCore"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Wovosoft\\LaravelLetsencryptCore\\": "./src"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Narayan Adhikary",
+                    "homepage": "https://github.com/wovosoft/laravel-letsencrypt-core"
+                }
+            ],
+            "description": "Yet Another ACME client: a decoupled LetsEncrypt client",
+            "homepage": "https://wovosoft.com",
+            "keywords": [
+                "acme",
+                "acmev2",
+                "encrypt",
+                "lets",
+                "ssl",
+                "v2",
+                "wovosoft"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         }
     ],
     "packages-dev": [
@@ -6202,6 +6255,72 @@
                 "source": "https://github.com/Jean85/pretty-package-versions/tree/2.0.6"
             },
             "time": "2024-03-08T09:58:59+00:00"
+        },
+        {
+            "name": "jeroen-g/laravel-packager",
+            "version": "2.10.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Jeroen-G/laravel-packager.git",
+                "reference": "7798af3cf346426d53937a3bd986840ef478e2cb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Jeroen-G/laravel-packager/zipball/7798af3cf346426d53937a3bd986840ef478e2cb",
+                "reference": "7798af3cf346426d53937a3bd986840ef478e2cb",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-zip": "*",
+                "guzzlehttp/guzzle": "~7",
+                "illuminate/support": "^5.0|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0",
+                "php": "^7.1|^8.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": ">=3.8",
+                "phpunit/phpunit": "^8.0|^9.0|^10.5"
+            },
+            "suggest": {
+                "sensiolabs/security-checker": "Required to use the security check command"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "JeroenG\\Packager\\PackagerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "JeroenG\\Packager\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "EUPL-1.1"
+            ],
+            "authors": [
+                {
+                    "name": "JeroenG",
+                    "email": "jeroengjeroeng@gmail.com",
+                    "homepage": "https://github.com/Jeroen-G"
+                }
+            ],
+            "description": "A cli tool for creating Laravel packages.",
+            "homepage": "https://github.com/Jeroen-G/laravel-packager",
+            "keywords": [
+                "Skeleton",
+                "laravel",
+                "package",
+                "packager"
+            ],
+            "support": {
+                "issues": "https://github.com/Jeroen-G/laravel-packager/issues",
+                "source": "https://github.com/Jeroen-G/laravel-packager/tree/2.10.0"
+            },
+            "time": "2024-03-31T14:59:08+00:00"
         },
         {
             "name": "laravel/breeze",
@@ -8898,11 +9017,14 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "wovosoft/laravel-letsencrypt-core": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.2"
+        "php": "^8.2",
+        "ext-openssl": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.6.0"

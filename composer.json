@@ -6,13 +6,16 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ext-openssl": "*",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.4",
-        "livewire/volt": "^1.0"
+        "livewire/volt": "^1.0",
+        "wovosoft/laravel-letsencrypt-core": "dev-master"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "jeroen-g/laravel-packager": "*",
         "laravel/breeze": "^2.2",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",
@@ -26,7 +29,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/Helpers/functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -65,5 +71,15 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": {
+        "wovosoft/laravel-letsencrypt-core": {
+            "type": "path",
+            "url": "./packages/wovosoft/laravel-letsencrypt-core",
+            "options": {
+                "symlink": true
+            }
+        }
+
+    }
 }
