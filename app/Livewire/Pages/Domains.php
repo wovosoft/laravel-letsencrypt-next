@@ -14,6 +14,7 @@ class Domains extends Component
     public function render(): Factory|Application|View|\Illuminate\View\View
     {
         $domains = Domain::query()
+            ->whereUserId(auth()->id())
             ->paginate();
 
         return view('livewire.pages.domains.index', [

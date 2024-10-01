@@ -7,7 +7,6 @@ $logout = function (Logout $logout) {
 
     $this->redirect('/', navigate: true);
 };
-
 ?>
 
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
@@ -27,7 +26,8 @@ $logout = function (Logout $logout) {
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('domains.index')" :active="request()->routeIs('domains.index')"
+                    <x-nav-link :href="route('domains.index')"
+                                :active="request()->routeIs('domains.index') || request()->routeIs('domains.show')"
                                 wire:navigate>
                         {{ __('Domains') }}
                     </x-nav-link>

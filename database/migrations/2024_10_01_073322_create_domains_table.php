@@ -19,7 +19,8 @@ return new class extends Migration {
 
             $table->string('domain');
             $table->string('email');
-
+            $table->string('verification_file_upload_url')->nullable();
+            $table->text('verification_file_upload_params')->nullable();
             $table->timestamps();
         });
     }
