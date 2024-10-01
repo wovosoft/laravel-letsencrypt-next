@@ -16,6 +16,7 @@
         "wovosoft/laravel-letsencrypt-core": "dev-master"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^3.1",
         "fakerphp/faker": "^1.23",
         "jeroen-g/laravel-packager": "*",
         "laravel/breeze": "^2.2",

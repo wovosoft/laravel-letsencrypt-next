@@ -12,14 +12,14 @@ return new class extends Migration {
     {
         Schema::create('domains', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('account_id')
-                ->references('id')
-                ->on('accounts')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
 
-            $table->string('domain')->unique();
-            $table->boolean('is_ownership_verified');
+            $table->string('domain');
+            $table->string('email');
+
             $table->timestamps();
         });
     }

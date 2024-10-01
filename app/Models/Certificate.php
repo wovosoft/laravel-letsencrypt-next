@@ -2,25 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 /**
- * App\Models\Certificate
+ * 
  *
  * @property int $id
  * @property int $domain_id
- * @property \Illuminate\Support\Carbon $issue_date
- * @property \Illuminate\Support\Carbon $expiry_date
- * @property string $private_key
+ * @property string $issue_date
+ * @property string $expiry_date
  * @property string $certificate
+ * @property string $private_key
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Account|null $account
- * @property-read \App\Models\Domain $domain
- * @property-read bool $is_expired
  * @method static \Illuminate\Database\Eloquent\Builder|Certificate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Certificate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Certificate query()
@@ -32,20 +29,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Certificate whereIssueDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Certificate wherePrivateKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Certificate whereUpdatedAt($value)
+ * @property-read \App\Models\Domain $domain
+ * @property-read \App\Models\User|null $user
  * @mixin \Eloquent
  */
 class Certificate extends Model
 {
-    use HasFactory;
-
-    protected $casts = [
-        "expiry_date" => "datetime",
-        "issue_date"  => "datetime",
-    ];
-
-    public function account(): BelongsTo
+    protected function casts(): array
     {
-        return $this->belongsTo(Account::class);
+        return [
+            'issue_date'  => 'date',
+            'expiry_date' => 'date'
+        ];
     }
 
     public function domain(): BelongsTo
@@ -53,8 +48,11 @@ class Certificate extends Model
         return $this->belongsTo(Domain::class);
     }
 
-    public function isExpired(): Attribute
+    public function user(): HasOneThrough
     {
-        return Attribute::get(fn(): bool => $this->expiry_date->lt(now()));
+        return $this->hasOneThrough(
+            User::class,
+            Domain::class
+        );
     }
 }

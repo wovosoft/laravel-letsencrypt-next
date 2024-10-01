@@ -12,17 +12,16 @@ return new class extends Migration {
     {
         Schema::create('certificates', function (Blueprint $table) {
             $table->id();
-            $table
-                ->foreignId('domain_id')
-                ->references('id')
-                ->on('domains')
+            $table->foreignId('domain_id')
+                ->constrained('domains')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
 
-            $table->dateTime('issue_date');
-            $table->dateTime('expiry_date');
-            $table->text('private_key');
-            $table->text('certificate');
+            $table->date('issue_date');
+            $table->date('expiry_date');
+
+            $table->longText('certificate');
+            $table->longText('private_key');
 
             $table->timestamps();
         });
