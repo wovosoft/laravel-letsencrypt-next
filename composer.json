@@ -74,15 +74,5 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true,
-    "repositories": {
-        "wovosoft/laravel-letsencrypt-core": {
-            "type": "path",
-            "url": "./packages/wovosoft/laravel-letsencrypt-core",
-            "options": {
-                "symlink": true
-            }
-        }
-
-    }
+    "prefer-stable": true
 }

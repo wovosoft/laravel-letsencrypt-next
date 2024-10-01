@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9d356943d2d3654d61de5237803e8ab7",
+    "content-hash": "7f8e740ed7ef30a6e943ee9c7391aa9e",
     "packages": [
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -6305,15 +6305,22 @@
         {
             "name": "wovosoft/laravel-letsencrypt-core",
             "version": "dev-master",
-            "dist": {
-                "type": "path",
-                "url": "./packages/wovosoft/laravel-letsencrypt-core",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wovosoft/laravel-letsencrypt-core.git",
                 "reference": "b0215472f01ce5a507ee01defd6e3162c60e5945"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wovosoft/laravel-letsencrypt-core/zipball/b0215472f01ce5a507ee01defd6e3162c60e5945",
+                "reference": "b0215472f01ce5a507ee01defd6e3162c60e5945",
+                "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-openssl": "*"
             },
+            "default-branch": true,
             "type": "package",
             "extra": {
                 "laravel": {
@@ -6330,6 +6337,7 @@
                     "Wovosoft\\LaravelLetsencryptCore\\": "./src"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "Apache-2.0"
             ],
@@ -6342,7 +6350,7 @@
             "description": "Yet Another ACME client: a decoupled LetsEncrypt client",
             "homepage": "https://wovosoft.com",
             "keywords": [
-                "acme",
+                "ACME",
                 "acmev2",
                 "encrypt",
                 "lets",
@@ -6350,10 +6358,11 @@
                 "v2",
                 "wovosoft"
             ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/wovosoft/laravel-letsencrypt-core/issues",
+                "source": "https://github.com/wovosoft/laravel-letsencrypt-core/tree/master"
+            },
+            "time": "2024-09-30T19:40:55+00:00"
         }
     ],
     "packages-dev": [
