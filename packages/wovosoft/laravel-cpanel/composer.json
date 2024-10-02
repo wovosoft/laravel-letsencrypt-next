@@ -1,0 +1,34 @@
+{
+    "name": "wovosoft/laravel-cpanel",
+    "description": "CPanel API Interaction with Laravel",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Narayan Adhikary",
+            "email": "wovosoft@gmail.com",
+            "homepage": "https://github.com/wovosoft"
+        }
+    ],
+    "homepage": "https://github.com/wovosoft/laravel-cpanel",
+    "keywords": ["Laravel", "LaravelCpanel"],
+    "autoload": {
+        "psr-4": {
+            "Wovosoft\\LaravelCpanel\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Wovosoft\\LaravelCpanel\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Wovosoft\\LaravelCpanel\\LaravelCpanelServiceProvider"
+            ],
+            "aliases": {
+                "LaravelCpanel": "Wovosoft\\LaravelCpanel\\Facades\\LaravelCpanel"
+            }
+        }
+    }
+}

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f8e740ed7ef30a6e943ee9c7391aa9e",
+    "content-hash": "bb0ed2a1b99b5d364eadf1a48d51bd90",
     "packages": [
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -6303,6 +6303,56 @@
             "time": "2022-06-03T18:03:27+00:00"
         },
         {
+            "name": "wovosoft/laravel-cpanel",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "./packages/wovosoft/laravel-cpanel",
+                "reference": "e6433f5cb44406579acd14fadac8fb2893840e38"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Wovosoft\\LaravelCpanel\\LaravelCpanelServiceProvider"
+                    ],
+                    "aliases": {
+                        "LaravelCpanel": "Wovosoft\\LaravelCpanel\\Facades\\LaravelCpanel"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Wovosoft\\LaravelCpanel\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Wovosoft\\LaravelCpanel\\Tests\\": "tests"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Narayan Adhikary",
+                    "email": "wovosoft@gmail.com",
+                    "homepage": "https://github.com/wovosoft"
+                }
+            ],
+            "description": "CPanel API Interaction with Laravel",
+            "homepage": "https://github.com/wovosoft/laravel-cpanel",
+            "keywords": [
+                "Laravel",
+                "LaravelCpanel"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "wovosoft/laravel-letsencrypt-core",
             "version": "dev-master",
             "source": {
@@ -9872,6 +9922,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "wovosoft/laravel-cpanel": 20,
         "wovosoft/laravel-letsencrypt-core": 20
     },
     "prefer-stable": true,

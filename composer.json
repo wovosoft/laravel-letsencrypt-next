@@ -5,7 +5,7 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "ext-openssl": "*",
         "laravel/folio": "^1.1",
         "laravel/framework": "^11.9",
@@ -13,6 +13,7 @@
         "livewire/livewire": "^3.5",
         "livewire/volt": "^1.6",
         "robsontenorio/mary": "^1.40",
+        "wovosoft/laravel-cpanel": "dev-main",
         "wovosoft/laravel-letsencrypt-core": "dev-master"
     },
     "require-dev": {
@@ -74,5 +75,14 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": {
+        "wovosoft/laravel-cpanel": {
+            "type": "path",
+            "url": "./packages/wovosoft/laravel-cpanel",
+            "options": {
+                "symlink": true
+            }
+        }
+    }
 }
