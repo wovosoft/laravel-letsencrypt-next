@@ -5,9 +5,15 @@ namespace App\Console\Commands;
 use App\Helpers\SslApplication;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Console\Command;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use Wovosoft\LaravelCpanel\Modules\FileMan;
+use Wovosoft\LaravelCpanel\Modules\SSL;
 use Wovosoft\LaravelLetsencryptCore\Client;
 use Wovosoft\LaravelLetsencryptCore\Data\Authorization;
 use Wovosoft\LaravelLetsencryptCore\Data\Order;
@@ -15,7 +21,6 @@ use Wovosoft\LaravelLetsencryptCore\Enums\Modes;
 use function Illuminate\Filesystem\join_paths;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\outro;
-use function Laravel\Prompts\progress;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\spin;
 use function Laravel\Prompts\table;
@@ -75,7 +80,7 @@ class AutoSsl extends Command
             ->createClient()
             ->createOrderAndSetAuthorizations()
             ->displayDomainAuthorizationChallenges()
-            ->verifyConfigurationAndGenerateCertificates();;
+            ->verifyConfigurationAndGenerateCertificates();
     }
 
     /**
@@ -92,11 +97,13 @@ class AutoSsl extends Command
         viewpoint validation, and your DNS provider may not have completed propagating the changes across their network.
         If you proceed too soon, Let's Encrypt will fail to validate.");
 
-        $case = select(
-            label   : 'Select Test Case',
-            options : array_keys($this->selfTestCases),
-            required: true
-        );
+        $case = $this->isDefaultSkipped()
+            ? Client::VALIDATION_HTTP
+            : select(
+                label   : 'Select Test Case',
+                options : array_keys($this->selfTestCases),
+                required: true
+            );
 
         $result = spin(
             callback: function () use ($case) {
@@ -109,7 +116,7 @@ class AutoSsl extends Command
         );
 
         if (!$result) {
-            $this->error("Could not verify ownership via $case");
+            $this->error("Could not locally verify ownership via $case");
         } else {
             $this->info("Your configuration has been verified locally via $case");
 
@@ -127,6 +134,48 @@ class AutoSsl extends Command
         }
     }
 
+    private function installCertificates(array $certificates)
+    {
+        if ($this->application->shouldUpdateSsl()) {
+
+            $response = spin(
+                callback: function () use ($certificates) {
+                    $sslManager = new SSL();
+                    return $sslManager->deleteSsl(
+                        domain: $this->application->getDomain()
+                    );
+                },
+                message : "Deleting Previous Certificates..."
+            );
+
+            if ($response->failed()) {
+                dd($response->json());
+            }
+
+            $response = spin(
+                callback: function () use ($certificates) {
+                    $sslManager = new SSL();
+                    return $sslManager->installSsl(
+                        domain: $this->application->getDomain(),
+                        cert  : $certificates['certificate.cert'],
+                        key   : $certificates['private.key'],
+                    );
+                },
+                message : "Updating SSL Certificates..."
+            );
+
+            if ($response->successful()) {
+                $this->info("SSL Certificates Updated");
+                dump($response->json());
+            } else {
+                dd($response->json());
+            }
+
+            exit(0);
+        }
+        return false;
+    }
+
     /**
      * @throws Exception
      */
@@ -138,19 +187,26 @@ class AutoSsl extends Command
         );
 
         if ($isReady) {
-            $certificates = spin(
-                callback: function () {
-                    $certificate = $this->client->getCertificate($this->order);
+            try {
+                $certificates = spin(
+                    callback: function () {
+                        $certificate = $this->client->getCertificate($this->order);
 
-                    return [
-                        "certificate.cert"         => $certificate->getCertificate(),
-                        "private.key"              => $certificate->getPrivateKey(),
-                        "domain_certificate"       => $certificate->getCertificate(false),
-                        "intermediate_certificate" => $certificate->getIntermediate(),
-                    ];
-                },
-                message : "Generating SSL Certificates..."
-            );
+                        return [
+                            "certificate.cert"         => $certificate->getCertificate(),
+                            "private.key"              => $certificate->getPrivateKey(),
+                            "domain_certificate"       => $certificate->getCertificate(false),
+                            "intermediate_certificate" => $certificate->getIntermediate(),
+                        ];
+                    },
+                    message : "Generating SSL Certificates..."
+                );
+
+                $this->installCertificates($certificates);
+            } catch (Exception $exception) {
+                dd($exception->getMessage());
+            }
+
 
             File::ensureDirectoryExists($this->application->getSslStorePath());
 
@@ -179,6 +235,9 @@ class AutoSsl extends Command
         return false;
     }
 
+    /**
+     * @throws ConnectionException
+     */
     private function displayDomainAuthorizationChallenges(): static
     {
         foreach ($this->authorizations as $authorization) {
@@ -225,8 +284,28 @@ class AutoSsl extends Command
             }
 
 
-            $shouldStoreFile = confirm(label: 'Store HTTP Verification File?');
-            if ($shouldStoreFile) {
+            $shouldStoreFile = $this->isDefaultSkipped() || confirm(label: 'Store HTTP Verification File?');
+
+            if ($this->application->shouldUploadToHost()) {
+                $temporaryStorePath = join_paths("autossl", $this->application->getDomain(), $file->getFilename());
+
+                File::ensureDirectoryExists(dirname(Storage::path($temporaryStorePath)));
+
+                if (!Storage::put($temporaryStorePath, $file->getContents())) {
+                    $this->error("Unable to store file at: $temporaryStorePath");
+                    exit();
+                }
+
+                $fileManager = new FileMan();
+                $response    = $fileManager->uploadFile(
+                    filePath       : Storage::path($temporaryStorePath),
+                    destinationPath: $this->application->getHttpVerificationFileStorePath()
+                );
+
+                if ($response->failed()) {
+                    dd($response->json());
+                }
+            } elseif ($shouldStoreFile) {
                 $filePath = join_paths($this->application->getHttpVerificationFileStorePath(), $file->getFilename());
 
                 File::ensureDirectoryExists(dirname($filePath));
@@ -250,13 +329,15 @@ class AutoSsl extends Command
      */
     private function createOrderAndSetAuthorizations(): static
     {
-        $domains = text(
-            label      : "Domains",
-            placeholder: "Write down the domains",
-            default    : $this->application->getDomain(),
-            required   : true,
-            hint       : "Domains Comma Separated",
-        );
+        $domains = $this->isDefaultSkipped()
+            ? $this->application->getDomain()
+            : text(
+                label      : "Domains",
+                placeholder: "Write down the domains",
+                default    : $this->application->getDomain(),
+                required   : true,
+                hint       : "Domains Comma Separated",
+            );
 
         $this->domains = str($domains)->explode(",")->toArray();
 
@@ -280,6 +361,11 @@ class AutoSsl extends Command
         return $this;
     }
 
+    private function isDefaultSkipped(): bool
+    {
+        return config("ssl.skip_showing_defaults", false);
+    }
+
     /**
      * @throws Exception
      */
@@ -295,13 +381,15 @@ class AutoSsl extends Command
             required: true,
         );
 
-        $email = text(
-            label      : "Email",
-            placeholder: "Enter Email",
-            default    : $this->application->getEmail(),
-            required   : true,
-            hint       : "Let's Encrypt Email Address",
-        );
+        $email = $this->isDefaultSkipped()
+            ? $this->application->getEmail()
+            : text(
+                label      : "Email",
+                placeholder: "Enter Email",
+                default    : $this->application->getEmail(),
+                required   : true,
+                hint       : "Let's Encrypt Email Address",
+            );
 
         spin(
             callback: function () use ($email, $mode) {

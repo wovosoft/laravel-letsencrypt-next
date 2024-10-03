@@ -9,7 +9,8 @@ class SslApplication
     private string $method;
     private string $httpVerificationFileStorePath;
     private string $sslStorePath;
-
+    private bool   $shouldUploadToHost = false;
+    private bool   $shouldUpdateSsl    = false;
 
     public static function init(array $params): static
     {
@@ -23,7 +24,19 @@ class SslApplication
         $this->method                        = data_get($params, 'method');
         $this->httpVerificationFileStorePath = data_get($params, 'http_verification_file_store_path');
         $this->sslStorePath                  = data_get($params, 'ssl_store_path');
+        $this->shouldUploadToHost            = data_get($params, 'should_upload_to_host', false);
+        $this->shouldUpdateSsl               = data_get($params, 'should_update_ssl', false);
         return $this;
+    }
+
+    public function shouldUploadToHost(): bool
+    {
+        return $this->shouldUploadToHost;
+    }
+
+    public function shouldUpdateSsl(): bool
+    {
+        return $this->shouldUpdateSsl;
     }
 
     /**

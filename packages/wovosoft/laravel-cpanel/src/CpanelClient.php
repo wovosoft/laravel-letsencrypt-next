@@ -18,117 +18,117 @@ class CpanelClient
     private PendingRequest $http;
 
     private array $cpanelUapiModules = [
-        'Mysql' => [
-            'create_database' => [
-                'db' => 'Database name',
+        'Mysql'       => [
+            'create_database'            => [
+                'db'      => 'Database name',
                 'charset' => 'Character set (optional)',
             ],
-            'delete_database' => [
+            'delete_database'            => [
                 'db' => 'Database name',
             ],
-            'create_user' => [
-                'name' => 'Username',
+            'create_user'                => [
+                'name'     => 'Username',
                 'password' => 'Password',
-                'domain' => 'Domain (optional)',
+                'domain'   => 'Domain (optional)',
             ],
             'set_privileges_on_database' => [
-                'user' => 'Username',
-                'db' => 'Database name',
+                'user'       => 'Username',
+                'db'         => 'Database name',
                 'privileges' => 'Array of privileges',
             ],
         ],
-        'Email' => [
-            'add_pop' => [
-                'email' => 'Email address',
+        'Email'       => [
+            'add_pop'       => [
+                'email'    => 'Email address',
                 'password' => 'Password',
-                'domain' => 'Domain (optional)',
+                'domain'   => 'Domain (optional)',
             ],
-            'delete_pop' => [
+            'delete_pop'    => [
                 'email' => 'Email address',
             ],
-            'list_pops' => [],
+            'list_pops'     => [],
             'add_forwarder' => [
-                'email' => 'Email address',
+                'email'      => 'Email address',
                 'forward_to' => 'Forwarding address',
             ],
         ],
-        'SSL' => [
+        'SSL'         => [
             'install_ssl' => [
-                'domain' => 'Domain name',
-                'cert' => 'SSL certificate',
-                'key' => 'SSL key',
+                'domain'   => 'Domain name',
+                'cert'     => 'SSL certificate',
+                'key'      => 'SSL key',
                 'cabundle' => 'CA bundle (optional)',
             ],
-            'list_certs' => [],
-            'delete_ssl' => [
+            'list_certs'  => [],
+            'delete_ssl'  => [
                 'domain' => 'Domain name',
             ],
         ],
-        'DomainInfo' => [
-            'domains_data' => [],
+        'DomainInfo'  => [
+            'domains_data'       => [],
             'single_domain_data' => [
                 'domain' => 'Domain name',
             ],
         ],
-        'DNS' => [
-            'add_zone_record' => [
+        'DNS'         => [
+            'add_zone_record'    => [
                 'domain' => 'Domain name',
-                'type' => 'Record type (e.g., A, CNAME)',
-                'name' => 'Record name',
-                'data' => 'Record data',
-                'ttl' => 'TTL (optional)',
+                'type'   => 'Record type (e.g., A, CNAME)',
+                'name'   => 'Record name',
+                'data'   => 'Record data',
+                'ttl'    => 'TTL (optional)',
             ],
             'remove_zone_record' => [
                 'domain' => 'Domain name',
-                'id' => 'Record ID',
+                'id'     => 'Record ID',
             ],
             'fetch_zone_records' => [
                 'domain' => 'Domain name',
             ],
         ],
-        'Fileman' => [
-            'upload_file' => [
+        'Fileman'     => [
+            'upload_file'  => [
                 'path' => 'Destination path',
                 'file' => 'File data',
             ],
             'delete_files' => [
                 'files' => 'Array of file paths',
             ],
-            'list_files' => [
+            'list_files'   => [
                 'path' => 'Directory path',
             ],
         ],
-        'Ftp' => [
-            'add_ftp' => [
-                'user' => 'Username',
-                'pass' => 'Password',
-                'quota' => 'Quota (optional)',
+        'Ftp'         => [
+            'add_ftp'    => [
+                'user'   => 'Username',
+                'pass'   => 'Password',
+                'quota'  => 'Quota (optional)',
                 'domain' => 'Domain (optional)',
             ],
             'delete_ftp' => [
                 'user' => 'Username',
             ],
-            'list_ftp' => [],
+            'list_ftp'   => [],
         ],
-        'Bandwidth' => [
-            'get_stats' => [
+        'Bandwidth'   => [
+            'get_stats'     => [
                 'domain' => 'Domain name (optional)',
             ],
             'get_bandwidth' => [],
         ],
-        'Backup' => [
-            'fullbackup' => [],
+        'Backup'      => [
+            'fullbackup'   => [],
             'list_backups' => [],
         ],
         'Preferences' => [
             'change_password' => [
-                'password' => 'New password',
+                'password'    => 'New password',
                 'oldpassword' => 'Old password (optional)',
             ],
-            'set_locale' => [
+            'set_locale'      => [
                 'locale' => 'Locale string',
             ],
-            'list_locales' => [],
+            'list_locales'    => [],
         ],
     ];
 
@@ -160,7 +160,7 @@ class CpanelClient
         $instance->http = Http::withHeaders($headers)
             ->baseUrl($instance->getDomain() . ":" . $instance->getPort() . "/execute")
             ->withOptions([
-                'verify' => false, // Disables SSL verification
+                'verify' => true, // SSL verification
             ]);
 
         return $instance;
@@ -172,9 +172,9 @@ class CpanelClient
     public static function parse(string $class, string $function, array $attrs = []): PromiseInterface|Response
     {
         return self::client()->query(
-            module: class_basename($class),
+            module  : class_basename($class),
             function: str($function)->snake()->value(),
-            attrs: $attrs
+            attrs   : $attrs
         );
     }
 

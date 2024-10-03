@@ -2,63 +2,60 @@
 
 namespace Wovosoft\LaravelCpanel\Modules;
 
+use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\Response;
 use Wovosoft\LaravelCpanel\CpanelClient;
 
 class SSL
 {
     /**
+     * @param string $domain
+     * @param string $cert
+     * @param string $key
+     * @param string|null $cabundle
+     * @return PromiseInterface|Response
      * @throws ConnectionException
      */
     public function installSsl(
-        string $domain,
-        string $cert,
-        string $key,
-        string $cabundle
+        string  $domain,
+        string  $cert,
+        string  $key,
+        ?string $cabundle = null
     )
     {
-        $response = CpanelClient::parse(
-            class: self::class,
+        return CpanelClient::parse(
+            class   : self::class,
             function: __FUNCTION__,
-            attrs: [
-                "domain" => $domain,
-                "cert" => $cert,
-                "key" => $key,
+            attrs   : [
+                "domain"   => $domain,
+                "cert"     => $cert,
+                "key"      => $key,
                 "cabundle" => $cabundle,
             ]
         );
-
-        if ($response->successful()) {
-            dd($response->json());
-        } else {
-            dd($response->body());
-        }
     }
 
     /**
+     * @param string $domain
+     * @return PromiseInterface|Response
      * @throws ConnectionException
      */
-    public function deleteSsl(string $domain)
+    public function deleteSsl(string $domain): PromiseInterface|Response
     {
-        $response = CpanelClient::parse(
-            class: self::class,
+        return CpanelClient::parse(
+            class   : self::class,
             function: __FUNCTION__,
-            attrs: ["domain" => $domain]
+            attrs   : ["domain" => $domain]
         );
-
-        if ($response->successful()) {
-            dd($response->json());
-        } else {
-            dd($response->body());
-        }
     }
 
     public function listCerts()
     {
         $response = CpanelClient::parse(
-            class: self::class,
+            class   : self::class,
             function: __FUNCTION__,
-            attrs: ["domain" => 'any']  //don't understand why without it returns error
+            attrs   : ["domain" => 'any']  //don't understand why without it returns error
         );
 
         if ($response->successful()) {
